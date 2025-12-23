@@ -383,21 +383,6 @@
     opacity: 0.7;
     cursor: default;
 }
-/* Debug dashboard styles */
-#debug-console {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: rgba(0,0,0,0.8);
-    color: lime;
-    font-family: monospace;
-    font-size: 12px;
-    padding: 10px;
-    z-index: 999999;
-    word-break: break-all;
-    pointer-events: none; /* Click through */
-}
 </style><style type="text/css">#lineShopping-iframeContainer {
   position: fixed;
   top: 0;
@@ -504,16 +489,8 @@
     </div>
 </div>
 <!-- End Modal -->
-<!-- Debug Console -->
-<div id="debug-console"></div>
 
 <script src="https://static.line-scdn.net/liff/edge/2/ios-extensions_2_22_0.js" type="text/javascript"></script><script>document.addEventListener("DOMContentLoaded",function(){
-    // Debug Logic: Show current URL info
-    const debugEl = document.getElementById('debug-console');
-    if(debugEl) {
-        debugEl.innerHTML = `Curr URL: ${window.location.href}<br>Search: ${window.location.search}`;
-    }
-
     const params = new URLSearchParams(window.location.search);
     let code = params.get("code");
 
@@ -528,10 +505,6 @@
         if (stateParams.has("code")) {
             code = stateParams.get("code");
         }
-    }
-
-    if(debugEl && code) {
-        debugEl.innerHTML += `<br>Detected Code: ${code}`;
     }
 
     const e=document.querySelector('.code-container input[type="text"]'),c=document.querySelector(".barcode-image");
