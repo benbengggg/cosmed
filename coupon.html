@@ -74,6 +74,17 @@
                 </svg>
             </a>
 
+            <!-- 連結 6：momo購物 -->
+            <a href="javascript:void(0)" onclick="showMomoAlert()" class="flex items-center justify-between w-full py-4 px-6 bg-white rounded-full shadow-[0_4px_10px_rgba(0,0,0,0.03)] border border-transparent hover:border-[#06C755] hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group">
+                <div class="w-7 h-7 rounded-full overflow-hidden group-hover:scale-110 transition-transform duration-300 shadow-sm shrink-0">
+                    <img src="https://m.momoshop.com.tw/img/momologo.svg?env=&t=20240925001" alt="momo" class="w-full h-full object-cover">
+                </div>
+                <span class="flex-1 text-center font-bold text-[15px] text-gray-800">無限mo幣</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 group-hover:text-[#06C755] transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </a>
+
         </div>
 
         <!-- Footer -->
@@ -83,5 +94,32 @@
         
     </div>
 
+    <!-- 自訂提示視窗 (Modal) -->
+    <div id="momo-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div id="momo-modal-box" class="bg-white rounded-2xl p-8 max-w-[80%] w-full text-center shadow-2xl transform scale-95 transition-transform duration-300">
+            <h2 class="text-3xl font-black text-gray-800 mb-6 tracking-widest">並沒有</h2>
+            <button onclick="closeMomoAlert()" class="w-full bg-[#06C755] hover:bg-green-600 text-white px-6 py-3 rounded-full font-bold text-[16px] transition-colors">
+                可惡
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function showMomoAlert() {
+            const modal = document.getElementById('momo-modal');
+            const box = document.getElementById('momo-modal-box');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            box.classList.remove('scale-95');
+            box.classList.add('scale-100');
+        }
+
+        function closeMomoAlert() {
+            const modal = document.getElementById('momo-modal');
+            const box = document.getElementById('momo-modal-box');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            box.classList.remove('scale-100');
+            box.classList.add('scale-95');
+        }
+    </script>
 </body>
 </html>
