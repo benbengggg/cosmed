@@ -14,7 +14,6 @@
         
         <!-- 大頭貼 (Avatar) -->
         <div class="w-24 h-24 rounded-full bg-white shadow-lg p-1.5 mb-5 relative">
-            <!-- 這裡使用一張質感的禮物/驚喜圖片作為大頭貼 -->
             <img src="https://i.meee.com.tw/Ix9mEeY.png" alt="Avatar" class="w-full h-full rounded-full object-cover">
             <!-- 裝飾小綠點 -->
             <div class="absolute bottom-1 right-1 w-5 h-5 bg-[#06C755] border-2 border-white rounded-full"></div>
@@ -27,60 +26,66 @@
         </p>
         
         <!-- 連結按鈕列表 -->
-        <div class="w-full space-y-4">
+        <div class="w-full space-y-5">
             
-            <!-- 連結 1：烤雞腿 -->
-            <a href="https://benbengggg.github.io/cosmed/?code=XXXX" class="flex items-center justify-between w-full py-4 px-6 bg-white rounded-full shadow-[0_4px_10px_rgba(0,0,0,0.03)] border border-transparent hover:border-[#06C755] hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group">
+            <!-- 連結 1：烤雞腿 (加入 data-expire 屬性設定過期時間) -->
+            <a href="https://benbengggg.github.io/cosmed/pec21c_roast.html" data-expire="2026-02-28T23:59:59+08:00" class="coupon-link relative flex items-center justify-between w-full py-4 px-6 bg-white rounded-full shadow-[0_4px_10px_rgba(0,0,0,0.03)] border border-transparent hover:border-[#06C755] hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group">
                 <span class="text-2xl group-hover:scale-110 transition-transform duration-300">🍖</span>
-                <span class="flex-1 text-center font-bold text-[15px] text-gray-800">21世紀 - 烤雞腿<br>(至 2/28 23:59 止)</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 group-hover:text-[#06C755] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <span class="flex-1 text-center font-bold text-[15px] text-gray-800 leading-tight">21世紀 - 烤雞腿<br><span class="text-xs font-normal text-gray-400 tracking-wide">(至 2/28 23:59 止)</span></span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 group-hover:text-[#06C755] transition-colors arrow-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
+                <!-- 狀態標籤 (透過JS動態顯示) -->
+                <div class="status-badge hidden"></div>
             </a>
             
             <!-- 連結 2：炸雞 -->
-            <a href="https://benbengggg.github.io/cosmed/pec21c.html" class="flex items-center justify-between w-full py-4 px-6 bg-white rounded-full shadow-[0_4px_10px_rgba(0,0,0,0.03)] border border-transparent hover:border-[#06C755] hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group">
+            <a href="https://benbengggg.github.io/cosmed/pec21c.html" data-expire="2026-03-15T23:59:59+08:00" class="coupon-link relative flex items-center justify-between w-full py-4 px-6 bg-white rounded-full shadow-[0_4px_10px_rgba(0,0,0,0.03)] border border-transparent hover:border-[#06C755] hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group">
                 <span class="text-2xl group-hover:scale-110 transition-transform duration-300">🍗</span>
-                <span class="flex-1 text-center font-bold text-[15px] text-gray-800">21世紀 - 香脆炸雞<br>(至 3/15 23:59 止)</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 group-hover:text-[#06C755] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <span class="flex-1 text-center font-bold text-[15px] text-gray-800 leading-tight">21世紀 - 香脆炸雞<br><span class="text-xs font-normal text-gray-400 tracking-wide">(至 3/15 23:59 止)</span></span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 group-hover:text-[#06C755] transition-colors arrow-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
+                <div class="status-badge hidden"></div>
             </a>
 
             <!-- 連結 3：薯條 -->
-            <a href="https://benbengggg.github.io/cosmed/pec21c_fries.html" class="flex items-center justify-between w-full py-4 px-6 bg-white rounded-full shadow-[0_4px_10px_rgba(0,0,0,0.03)] border border-transparent hover:border-[#06C755] hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group">
+            <a href="https://benbengggg.github.io/cosmed/pec21c_fries.html" data-expire="2026-03-25T23:59:59+08:00" class="coupon-link relative flex items-center justify-between w-full py-4 px-6 bg-white rounded-full shadow-[0_4px_10px_rgba(0,0,0,0.03)] border border-transparent hover:border-[#06C755] hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group">
                 <span class="text-2xl group-hover:scale-110 transition-transform duration-300">🍟</span>
-                <span class="flex-1 text-center font-bold text-[15px] text-gray-800">21世紀 - 中薯霸<br>(至 3/25 23:59 止)</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 group-hover:text-[#06C755] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <span class="flex-1 text-center font-bold text-[15px] text-gray-800 leading-tight">21世紀 - 中薯霸<br><span class="text-xs font-normal text-gray-400 tracking-wide">(至 3/25 23:59 止)</span></span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 group-hover:text-[#06C755] transition-colors arrow-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
+                <div class="status-badge hidden"></div>
             </a>
 
             <!-- 連結 4：老賴紅茶 -->
-            <a href="https://benbengggg.github.io/cosmed/liketea.html" class="flex items-center justify-between w-full py-4 px-6 bg-white rounded-full shadow-[0_4px_10px_rgba(0,0,0,0.03)] border border-transparent hover:border-[#06C755] hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group">
+            <a href="https://benbengggg.github.io/cosmed/liketea.html" data-expire="2026-03-31T23:59:59+08:00" class="coupon-link relative flex items-center justify-between w-full py-4 px-6 bg-white rounded-full shadow-[0_4px_10px_rgba(0,0,0,0.03)] border border-transparent hover:border-[#06C755] hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group">
                 <span class="text-2xl group-hover:scale-110 transition-transform duration-300">🥤</span>
-                <span class="flex-1 text-center font-bold text-[15px] text-gray-800">老賴茶棧 - 招牌紅茶<br>(至 3/31 23:59 止)</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 group-hover:text-[#06C755] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <span class="flex-1 text-center font-bold text-[15px] text-gray-800 leading-tight">老賴茶棧 - 招牌紅茶<br><span class="text-xs font-normal text-gray-400 tracking-wide">(至 3/31 23:59 止)</span></span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 group-hover:text-[#06C755] transition-colors arrow-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
+                <div class="status-badge hidden"></div>
             </a>
 
             <!-- 連結 5：餃子的王將 -->
-            <a href="https://benbengggg.github.io/cosmed/ohsho.html" class="flex items-center justify-between w-full py-4 px-6 bg-white rounded-full shadow-[0_4px_10px_rgba(0,0,0,0.03)] border border-transparent hover:border-[#06C755] hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group">
+            <a href="https://benbengggg.github.io/cosmed/ohsho.html" data-expire="2026-04-30T22:30:00+08:00" class="coupon-link relative flex items-center justify-between w-full py-4 px-6 bg-white rounded-full shadow-[0_4px_10px_rgba(0,0,0,0.03)] border border-transparent hover:border-[#06C755] hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group">
                 <span class="text-2xl group-hover:scale-110 transition-transform duration-300">🥟</span>
-                <span class="flex-1 text-center font-bold text-[15px] text-gray-800">餃子的王將 - 煎餃<br>(至 4/30 22:30 止)</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 group-hover:text-[#06C755] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <span class="flex-1 text-center font-bold text-[15px] text-gray-800 leading-tight">餃子的王將 - 煎餃<br><span class="text-xs font-normal text-gray-400 tracking-wide">(至 4/30 22:30 止)</span></span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 group-hover:text-[#06C755] transition-colors arrow-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
+                <div class="status-badge hidden"></div>
             </a>
 
             <!-- 連結 6：momo購物 -->
-            <a href="javascript:void(0)" onclick="showMomoAlert()" class="flex items-center justify-between w-full py-4 px-6 bg-white rounded-full shadow-[0_4px_10px_rgba(0,0,0,0.03)] border border-transparent hover:border-[#06C755] hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group">
+            <a href="javascript:void(0)" onclick="showMomoAlert()" class="relative flex items-center justify-between w-full py-4 px-6 bg-white rounded-full shadow-[0_4px_10px_rgba(0,0,0,0.03)] border border-transparent hover:border-[#06C755] hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group">
                 <div class="w-7 h-7 rounded-full overflow-hidden group-hover:scale-110 transition-transform duration-300 shadow-sm shrink-0">
                     <img src="https://m.momoshop.com.tw/img/momologo.svg?env=&t=20240925001" alt="momo" class="w-full h-full object-cover">
                 </div>
-                <span class="flex-1 text-center font-bold text-[15px] text-gray-800">無限mo幣</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 group-hover:text-[#06C755] transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <span class="flex-1 text-center font-bold text-[15px] text-gray-800 leading-tight">無限mo幣</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 group-hover:text-[#06C755] transition-colors shrink-0 arrow-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
             </a>
@@ -105,6 +110,7 @@
     </div>
 
     <script>
+        // Momo Modal 控制
         function showMomoAlert() {
             const modal = document.getElementById('momo-modal');
             const box = document.getElementById('momo-modal-box');
@@ -120,7 +126,49 @@
             box.classList.remove('scale-100');
             box.classList.add('scale-95');
         }
+
+        // 判斷是否過期或快到期的邏輯
+        document.addEventListener('DOMContentLoaded', () => {
+            const now = new Date(); // 取得現在時間
+            const links = document.querySelectorAll('.coupon-link');
+
+            links.forEach(link => {
+                const expireStr = link.getAttribute('data-expire');
+                if (!expireStr) return; // 如果沒有設定時間就不檢查
+
+                const expireDate = new Date(expireStr);
+                const timeDiff = expireDate - now; // 距離過期的毫秒數
+                const hours24 = 24 * 60 * 60 * 1000; // 24小時的毫秒數
+
+                const badge = link.querySelector('.status-badge');
+                const arrowIcon = link.querySelector('.arrow-icon');
+                
+                if (timeDiff <= 0) {
+                    // 【已過期】樣式：反灰但保留點擊功能
+                    link.classList.add('bg-gray-200', 'opacity-50', 'grayscale', 'shadow-none');
+                    link.classList.remove('bg-white', 'hover:border-[#06C755]', 'hover:shadow-md', 'transform', 'hover:-translate-y-1');
+                    
+                    if (badge) {
+                        badge.textContent = "已過期";
+                        badge.className = "absolute -top-2.5 -right-2 bg-gray-500 text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full shadow-md z-10 tracking-widest";
+                        badge.classList.remove('hidden');
+                    }
+                    if(arrowIcon) arrowIcon.classList.add('hidden'); // 隱藏右側箭頭
+                    
+                } else if (timeDiff <= hours24) {
+                    // 【快到期 (24H內)】樣式
+                    link.classList.add('border-red-400', 'shadow-[0_0_12px_rgba(248,113,113,0.25)]');
+                    link.classList.remove('border-transparent');
+                    
+                    if (badge) {
+                        // 加入會閃爍的小紅點圖示與文字
+                        badge.innerHTML = `<span class="flex items-center gap-1.5 tracking-wider">即將過期 <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-red-100"></span></span></span>`;
+                        badge.className = "absolute -top-2.5 -right-2 bg-red-500 text-white border border-red-600 text-[11px] font-bold px-2.5 py-0.5 rounded-full shadow-md z-10";
+                        badge.classList.remove('hidden');
+                    }
+                }
+            });
+        });
     </script>
 </body>
 </html>
-
