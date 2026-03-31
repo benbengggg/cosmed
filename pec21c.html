@@ -148,7 +148,7 @@
         <!-- Global Backdrop (原生透明度過渡，避免一開始露出來) -->
         <div id="globalBackdrop" class="fixed inset-0 bg-black/50 z-40 max-w-md mx-auto opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out" onclick="closeAllSheets()"></div>
 
-        <!-- Confirm Bottom Sheet (確認使用彈窗) -->
+        <!-- Confirm Bottom Sheet (無綠色大字代碼) -->
         <div id="confirmSheet" class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white rounded-t-2xl z-50 overflow-hidden transform translate-y-full transition-transform duration-300 ease-out">
             <!-- Modal Header (X按鈕) -->
             <div class="flex justify-end p-4">
@@ -161,10 +161,8 @@
             
             <!-- Modal Content -->
             <div class="flex flex-col items-center justify-center px-5 pb-8 text-center space-y-5">
-                <!-- 大號綠色號碼 (烤雞腿版本的 2311) -->
-                <div class="text-[35px] font-bold text-[#00c300] leading-none mb-1 tracking-tight" style="font-family: -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;">2311</div>
                 
-                <div class="space-y-3 pb-5">
+                <div class="space-y-3 pb-5 mt-2">
                     <h3 class="text-[20px] font-bold text-[#111111] tracking-wide">確定要使用優惠券嗎？</h3>
                     <p class="text-[14px] text-[#949494]">本操作無法取消。請先確認操作說明後再使用。</p>
                 </div>
