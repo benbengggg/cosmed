@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>麥當勞星級幣 LIFF 手機接力器 (內建 1~70 號題庫)</title>
+  <title>麥當勞星級幣 LIFF 手機接力器</title>
   <style>
     * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
     body {
@@ -109,6 +109,11 @@
       gap: 12px;
       margin-top: 22px;
     }
+    /* 上方控制列專用間距 */
+    .sub-controls.top {
+      margin-top: 0;
+      margin-bottom: 18px;
+    }
     .nav-btn {
       background: rgba(255, 255, 255, 0.2);
       border: 1px solid rgba(255, 255, 255, 0.35);
@@ -118,6 +123,9 @@
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
+    }
+    .nav-btn:active {
+      background: rgba(255, 255, 255, 0.35);
     }
 
     /* 底部模式切換列 */
@@ -236,11 +244,19 @@
 
   <!-- 全螢幕大按鈕 -->
   <div id="giantBtn" onclick="openNext()">
+    
+    <!-- 上方新增的導覽按鈕 -->
+    <div class="sub-controls top" onclick="event.stopPropagation()">
+      <button class="nav-btn" onclick="stepPrev()">⬅️ 上一個</button>
+      <button class="nav-btn" onclick="stepSkip()">跳過 ➡️</button>
+    </div>
+
     <div class="badge-mode">自動過濾雜訊與重複網址・記憶已領取進度</div>
     <div class="step-num" id="stepText">0 / 0</div>
     <div class="hint" id="hintText">👆 點擊畫面任意處開啟 LINE</div>
     <div class="code-tag" id="codeText">q=...</div>
 
+    <!-- 下方的導覽按鈕保留 -->
     <div class="sub-controls" onclick="event.stopPropagation()">
       <button class="nav-btn" onclick="stepPrev()">⬅️ 上一個</button>
       <button class="nav-btn" onclick="stepSkip()">跳過 ➡️</button>
@@ -268,7 +284,7 @@
     <div class="modal-actions">
       <button class="modal-btn add" onclick="importUrls('append')">➕ 匯入新網址（自動保留進度並去重）</button>
       <button class="modal-btn replace" onclick="importUrls('replace')">🔁 清空舊清單，只跑這次貼上的</button>
-      <button class="modal-btn reset" onclick="restoreDefault()">↩️ 還原預設 69 組清單</button>
+      <button class="modal-btn reset" onclick="restoreDefault()">↩️ 還原預設清單</button>
     </div>
   </div>
 
@@ -277,74 +293,41 @@
   <script>
     const LIFF_ID = "2010522144-5nZYW3pn";
 
-    // 預設內建你提供的 1~70 號完整清單（第 62 與第 5 號重複，自動去重後共 69 組）
     const DEFAULT_TEXT = `
 +18, 105~123
 123. 06692 https://liff.line.me/2010522144-5nZYW3pn?q=3539bcd06171
-
 122. 06697 https://liff.line.me/2010522144-5nZYW3pn?q=12388970e6cb
-
 121. 07749 https://liff.line.me/2010522144-5nZYW3pn?q=799e935eacd6
-
 120. 06557 https://liff.line.me/2010522144-5nZYW3pn?q=1e056add9e60
-
 119. 07827 https://liff.line.me/2010522144-5nZYW3pn?q=ed804eae0442
-
 118. 07885 https://liff.line.me/2010522144-5nZYW3pn?q=e887e2d989cb
-
 117. 07754 https://liff.line.me/2010522144-5nZYW3pn?q=cb92b05b52dc
-
 116. 07661 https://liff.line.me/2010522144-5nZYW3pn?q=b85d832d3d76
-
 115. 07806 https://liff.line.me/2010522144-5nZYW3pn?q=b3553df6b231
-
 114. 03688 https://liff.line.me/2010522144-5nZYW3pn?q=800dafc5f71a
-
 113. 07530 https://liff.line.me/2010522144-5nZYW3pn?q=1384e3e6ba40
-
 112. 07052 https://liff.line.me/2010522144-5nZYW3pn?q=256d6aea915d
-
 111. 07054 https://liff.line.me/2010522144-5nZYW3pn?q=7013f1a15c3c
-
 110. 07053 https://liff.line.me/2010522144-5nZYW3pn?q=013003e21496
-
 109. 07883 https://liff.line.me/2010522144-5nZYW3pn?q=6855944c83b5
-
 108. 07552 https://liff.line.me/2010522144-5nZYW3pn?q=47c124315b46
-
 107. 07849 https://liff.line.me/2010522144-5nZYW3pn?q=3abab0d5605d
-
 106. 07059 https://liff.line.me/2010522144-5nZYW3pn?q=0517b1d2d525
-
 105. 07039 https://liff.line.me/2010522144-5nZYW3pn?q=db638c3d6c78
 104. 07756 https://liff.line.me/2010522144-5nZYW3pn?q=93d8df9a8ce7
-
 103. 07953 https://liff.line.me/2010522144-5nZYW3pn?q=41d398eb511f
-
 102. 07634 https://liff.line.me/2010522144-5nZYW3pn?q=b0b88e7e67d5
-
 101. 02143 https://liff.line.me/2010522144-5nZYW3pn?q=66d55c8d3268
-
 100. 07627 https://liff.line.me/2010522144-5nZYW3pn?q=06074d478fe0
-
 99. 06647 https://liff.line.me/2010522144-5nZYW3pn?q=a402d43f23f8
-
 98. 06646 https://liff.line.me/2010522144-5nZYW3pn?q=caff963d8f61
-
 97. 07419 https://liff.line.me/2010522144-5nZYW3pn?q=c6cd8236737d
-
 96. 07377 https://liff.line.me/2010522144-5nZYW3pn?q=f0230d944d24
-
 95. 07421 https://liff.line.me/2010522144-5nZYW3pn?q=33c8ea6f3428
-
 94. 07422 https://liff.line.me/2010522144-5nZYW3pn?q=a706921a98ae
-
 93. 06559 https://liff.line.me/2010522144-5nZYW3pn?q=e3e0e05ebdb4
-
 92. 07913 https://liff.line.me/2010522144-5nZYW3pn?q=c0a607e059b1
-
 91. 07631 https://liff.line.me/2010522144-5nZYW3pn?q=8f4d09f0d943
-
 90. 03805 https://liff.line.me/2010522144-5nZYW3pn?q=27d184e46b42
 89. 07560 https://liff.line.me/2010522144-5nZYW3pn?q=ec30ad2711b8
 88. 02867 https://liff.line.me/2010522144-5nZYW3pn?q=bedcf0ecf89c
@@ -385,14 +368,12 @@
 53. https://liff.line.me/2010522144-5nZYW3pn?q=dd09848eb2e6
 52. https://liff.line.me/2010522144-5nZYW3pn?q=ec2cef590c1c
 51. https://liff.line.me/2010522144-5nZYW3pn?q=f72fa8f1dcb9
-
 +5, 46~50
 50. 06528 https://liff.line.me/2010522144-5nZYW3pn?q=f4cca4717bcf
 49. 07524 https://liff.line.me/2010522144-5nZYW3pn?q=eb5d6d9aa13e
 48. 07550 https://liff.line.me/2010522144-5nZYW3pn?q=9cdd4381e880
 47. 07704 https://liff.line.me/2010522144-5nZYW3pn?q=54e69e20ae8b
 46. 07884 https://liff.line.me/2010522144-5nZYW3pn?q=e825e0e23e66
-
 +9, 37~45
 45. 00217 https://liff.line.me/2010522144-5nZYW3pn?q=c5da06e2ad07
 44. 03152 https://liff.line.me/2010522144-5nZYW3pn?q=7d53f386f231
@@ -403,7 +384,6 @@
 39. 07886 https://liff.line.me/2010522144-5nZYW3pn?q=eb947754005d
 38. 07894 https://liff.line.me/2010522144-5nZYW3pn?q=ede15b5db7aa
 37. 07909 https://liff.line.me/2010522144-5nZYW3pn?q=dc012a067afb
-
 +6, 31-36
 36. 04795 https://liff.line.me/2010522144-5nZYW3pn?q=00f883a13d7e
 35. 07933 https://liff.line.me/2010522144-5nZYW3pn?q=3248c41b8a5b
@@ -606,13 +586,13 @@
     }
 
     function restoreDefault() {
-      if (confirm('確定要還原為預設的 69 組網址並重置進度嗎？')) {
+      if (confirm('確定要還原為預設清單並重置進度嗎？')) {
         allCodes = extractCodes(DEFAULT_TEXT);
         visitedSet.clear();
         saveState();
         render();
         closeModal();
-        showToast('已還原預設 69 組清單！');
+        showToast('已還原預設清單！');
       }
     }
 
