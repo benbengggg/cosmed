@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>LINE LIFF 手機盲點接力器</title>
+  <title>麥當勞星級幣 LIFF 手機接力器 (內建 1~70 號題庫)</title>
   <style>
     * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
     body {
@@ -26,9 +26,17 @@
       gap: 8px;
       flex-wrap: wrap;
     }
-    .stats { font-size: 13px; color: #94a3b8; }
-    .stats b { color: #38bdf8; }
-    .btn-group { display: flex; gap: 6px; }
+    .stats {
+      font-size: 13px;
+      color: #94a3b8;
+    }
+    .stats b {
+      color: #38bdf8;
+    }
+    .btn-group {
+      display: flex;
+      gap: 6px;
+    }
     .btn-small {
       background: #334155;
       color: #f1f5f9;
@@ -43,7 +51,9 @@
       background: #2563eb;
       border-color: #3b82f6;
     }
-    .btn-small:active { opacity: 0.8; }
+    .btn-small:active {
+      opacity: 0.8;
+    }
 
     /* 主盲點觸發區 */
     #giantBtn {
@@ -64,7 +74,7 @@
       filter: brightness(0.92);
       transform: scale(0.995);
     }
-    #giantBtn.empty, #giantBtn.done {
+    #giantBtn.done {
       background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
     }
     .badge-mode {
@@ -91,11 +101,8 @@
       background: rgba(0, 0, 0, 0.3);
       padding: 8px 16px;
       border-radius: 10px;
-      font-size: 14px;
-      max-width: 90%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      font-size: 15px;
+      letter-spacing: 0.5px;
     }
     .sub-controls {
       display: flex;
@@ -138,19 +145,24 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.95);
+      background: rgba(15, 23, 42, 0.92);
       z-index: 999;
       flex-direction: column;
       padding: 16px;
     }
-    #modal.open { display: flex; }
+    #modal.open {
+      display: flex;
+    }
     .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 10px;
     }
-    .modal-header h3 { margin: 0; font-size: 18px; }
+    .modal-header h3 {
+      margin: 0;
+      font-size: 18px;
+    }
     textarea {
       width: 100%;
       flex: 1;
@@ -177,14 +189,20 @@
       font-size: 15px;
       font-weight: 700;
       cursor: pointer;
-      color: #fff;
     }
     .modal-btn.add {
       background: #06C755;
+      color: #fff;
       grid-column: span 2;
     }
-    .modal-btn.replace { background: #3b82f6; }
-    .modal-btn.clear { background: #ef4444; }
+    .modal-btn.replace {
+      background: #3b82f6;
+      color: #fff;
+    }
+    .modal-btn.reset {
+      background: #ef4444;
+      color: #fff;
+    }
     .toast {
       position: fixed;
       bottom: 65px;
@@ -200,29 +218,30 @@
       opacity: 0;
       transition: opacity 0.25s;
       z-index: 1000;
-      white-space: nowrap;
     }
-    .toast.show { opacity: 1; }
+    .toast.show {
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
 
   <div class="top-bar">
-    <div class="stats" id="statsText">總題庫: <b>0</b> 組</div>
+    <div class="stats" id="statsText">載入中...</div>
     <div class="btn-group">
       <button class="btn-small primary" onclick="openModal()">➕ 貼上新連結</button>
-      <button class="btn-small" onclick="resetVisited()">🔄 重刷已貼清單</button>
+      <button class="btn-small" onclick="resetVisited()">🔄 重刷全部</button>
     </div>
   </div>
 
   <!-- 全螢幕大按鈕 -->
-  <div id="giantBtn" class="empty" onclick="openNext()">
-    <div class="badge-mode">自動過濾文字雜訊・自動去重・記憶進度</div>
-    <div class="step-num" id="stepText">尚無連結</div>
-    <div class="hint" id="hintText">👆 點擊此處貼上你的 LIFF 網址</div>
-    <div class="code-tag" id="codeText">支援整段社群文字直接貼上</div>
+  <div id="giantBtn" onclick="openNext()">
+    <div class="badge-mode">自動過濾雜訊與重複網址・記憶已領取進度</div>
+    <div class="step-num" id="stepText">0 / 0</div>
+    <div class="hint" id="hintText">👆 點擊畫面任意處開啟 LINE</div>
+    <div class="code-tag" id="codeText">q=...</div>
 
-    <div class="sub-controls" id="subControls" style="display:none;" onclick="event.stopPropagation()">
+    <div class="sub-controls" onclick="event.stopPropagation()">
       <button class="nav-btn" onclick="stepPrev()">⬅️ 上一個</button>
       <button class="nav-btn" onclick="stepSkip()">跳過 ➡️</button>
     </div>
@@ -236,46 +255,134 @@
     </select>
   </div>
 
-  <!-- 貼上連結視窗 -->
+  <!-- 貼上新連結視窗 -->
   <div id="modal">
     <div class="modal-header">
-      <h3>📋 貼上網址或整段社群文字</h3>
+      <h3>📋 貼上社群分享的網址或整段文字</h3>
       <button class="btn-small" onclick="closeModal()">✖ 關閉</button>
     </div>
     <p style="font-size:13px; color:#94a3b8; margin:0 0 10px 0;">
-      直接將包含網址的整段文字（含編號、聊天文字皆可）貼在下方，系統會自動擷取網址並過濾重複項目：
+      不管是「+20, 51-70 但沒給號碼」還是編號文字，直接整段貼在下方即可，系統會自動抓出網址並跳過你已經點過的序號：
     </p>
-    <textarea id="rawInput" placeholder="請在此貼上包含 https://liff.line.me/... 的文字或網址清單"></textarea>
+    <textarea id="rawInput" placeholder="直接在此貼上整段 LINE 社群文字與網址..."></textarea>
     <div class="modal-actions">
-      <button class="modal-btn add" onclick="importUrls('append')">➕ 匯入並累加網址（保留已點過的紀錄）</button>
-      <button class="modal-btn replace" onclick="importUrls('replace')">🔁 覆蓋舊清單（只跑這次貼的）</button>
-      <button class="modal-btn clear" onclick="clearAllData()">🗑️ 清空所有網址與紀錄</button>
+      <button class="modal-btn add" onclick="importUrls('append')">➕ 匯入新網址（自動保留進度並去重）</button>
+      <button class="modal-btn replace" onclick="importUrls('replace')">🔁 清空舊清單，只跑這次貼上的</button>
+      <button class="modal-btn reset" onclick="restoreDefault()">↩️ 還原預設 69 組清單</button>
     </div>
   </div>
 
   <div class="toast" id="toast"></div>
 
   <script>
-    let allUrls = [];
+    const LIFF_ID = "2010522144-5nZYW3pn";
+
+    // 預設內建你提供的 1~70 號完整清單（第 62 與第 5 號重複，自動去重後共 69 組）
+    const DEFAULT_TEXT = `
++20, 51-70
+但沒給號碼
+70. https://liff.line.me/2010522144-5nZYW3pn?q=0ae2bca0b486
+69. https://liff.line.me/2010522144-5nZYW3pn?q=1ce9d782f8e9
+68. https://liff.line.me/2010522144-5nZYW3pn?q=2758d96da7d0
+67. https://liff.line.me/2010522144-5nZYW3pn?q=4f3902dbfef7
+66. https://liff.line.me/2010522144-5nZYW3pn?q=51f5fd3eeade
+65. https://liff.line.me/2010522144-5nZYW3pn?q=6624fe848b61
+64. https://liff.line.me/2010522144-5nZYW3pn?q=6ccadd5beacb
+63. https://liff.line.me/2010522144-5nZYW3pn?q=6eb4872a1f90
+62. https://liff.line.me/2010522144-5nZYW3pn?q=7a5ecb5ba85a
+61. https://liff.line.me/2010522144-5nZYW3pn?q=7ba2da7710c7
+60. https://liff.line.me/2010522144-5nZYW3pn?q=a49bfb30b190
+59. https://liff.line.me/2010522144-5nZYW3pn?q=ae75762918e7
+58. https://liff.line.me/2010522144-5nZYW3pn?q=bde60a7f0811
+57. https://liff.line.me/2010522144-5nZYW3pn?q=c65fb75a18f0
+56. https://liff.line.me/2010522144-5nZYW3pn?q=ca1a34650be9
+55. https://liff.line.me/2010522144-5nZYW3pn?q=d14daaaa11b0
+54. https://liff.line.me/2010522144-5nZYW3pn?q=d26244294f84
+53. https://liff.line.me/2010522144-5nZYW3pn?q=dd09848eb2e6
+52. https://liff.line.me/2010522144-5nZYW3pn?q=ec2cef590c1c
+51. https://liff.line.me/2010522144-5nZYW3pn?q=f72fa8f1dcb9
+
++5, 46~50
+50. 06528 https://liff.line.me/2010522144-5nZYW3pn?q=f4cca4717bcf
+49. 07524 https://liff.line.me/2010522144-5nZYW3pn?q=eb5d6d9aa13e
+48. 07550 https://liff.line.me/2010522144-5nZYW3pn?q=9cdd4381e880
+47. 07704 https://liff.line.me/2010522144-5nZYW3pn?q=54e69e20ae8b
+46. 07884 https://liff.line.me/2010522144-5nZYW3pn?q=e825e0e23e66
+
++9, 37~45
+45. 00217 https://liff.line.me/2010522144-5nZYW3pn?q=c5da06e2ad07
+44. 03152 https://liff.line.me/2010522144-5nZYW3pn?q=7d53f386f231
+43. 06908 https://liff.line.me/2010522144-5nZYW3pn?q=0d0e7e9bfc52
+42. 07819 https://liff.line.me/2010522144-5nZYW3pn?q=07842e387c76
+41. 07863 https://liff.line.me/2010522144-5nZYW3pn?q=5f0dca9f0c14
+40. 07876 https://liff.line.me/2010522144-5nZYW3pn?q=1381978d5b0e
+39. 07886 https://liff.line.me/2010522144-5nZYW3pn?q=eb947754005d
+38. 07894 https://liff.line.me/2010522144-5nZYW3pn?q=ede15b5db7aa
+37. 07909 https://liff.line.me/2010522144-5nZYW3pn?q=dc012a067afb
+
++6, 31-36
+36. 04795 https://liff.line.me/2010522144-5nZYW3pn?q=00f883a13d7e
+35. 07933 https://liff.line.me/2010522144-5nZYW3pn?q=3248c41b8a5b
+34. 07535 https://liff.line.me/2010522144-5nZYW3pn?q=16a512706768
+33. https://liff.line.me/2010522144-5nZYW3pn?q=bfa4a835e6c5
+32. 07639 https://liff.line.me/2010522144-5nZYW3pn?q=460bfc764882
+31. 07723 https://liff.line.me/2010522144-5nZYW3pn?q=8c43afac7b11
+30. https://liff.line.me/2010522144-5nZYW3pn?q=0c64cdcb75ab
+29. https://liff.line.me/2010522144-5nZYW3pn?q=5103027490f8
+28. https://liff.line.me/2010522144-5nZYW3pn?q=ff2948060d7a
+27. 林口文化 https://liff.line.me/2010522144-5nZYW3pn?q=e185807ed703
+26. 07745 https://liff.line.me/2010522144-5nZYW3pn?q=fb8358155ec2
+25. 07757 https://liff.line.me/2010522144-5nZYW3pn?q=f3fcf999300a
+24. 07040 https://liff.line.me/2010522144-5nZYW3pn?q=2800c7d835a5
+23. 07743 https://liff.line.me/2010522144-5nZYW3pn?q=ef576de6aa2e
+22. 07810 https://liff.line.me/2010522144-5nZYW3pn?q=faeec1b39df1
+21. https://liff.line.me/2010522144-5nZYW3pn?q=b7b847046168
+20. 07575 https://liff.line.me/2010522144-5nZYW3pn?q=fc194d543945
+19. 07838 https://liff.line.me/2010522144-5nZYW3pn?q=3816e62c0c65
+18. 07176 https://liff.line.me/2010522144-5nZYW3pn?q=9840a4c70398
+17. 07681 https://liff.line.me/2010522144-5nZYW3pn?q=0a2464b85e4d
+16. 07917 https://liff.line.me/2010522144-5nZYW3pn?q=e832dac94276
+15. 07668 https://liff.line.me/2010522144-5nZYW3pn?q=96d886c784ea
+14. 07608 https://liff.line.me/2010522144-5nZYW3pn?q=4d7a156f09ea
+13. 07579 https://liff.line.me/2010522144-5nZYW3pn?q=854b7b477549
+12. 台中新光 https://liff.line.me/2010522144-5nZYW3pn?q=4027a05d4210
+11. 02011 https://liff.line.me/2010522144-5nZYW3pn?q=b2a45107b288
+10. https://liff.line.me/2010522144-5nZYW3pn?q=f7ec4f46ffe3
+9. 07029 https://liff.line.me/2010522144-5nZYW3pn?q=4f1d82f3f089
+8. 07680 https://liff.line.me/2010522144-5nZYW3pn?q=757f07e44a21
+7. 03786 https://liff.line.me/2010522144-5nZYW3pn?q=3d6fa06bfb51
+6. 07889 https://liff.line.me/2010522144-5nZYW3pn?q=3e8f67231427
+5. 07878 https://liff.line.me/2010522144-5nZYW3pn?q=7a5ecb5ba85a
+4. https://liff.line.me/2010522144-5nZYW3pn?q=0a9165d11b0a
+3. 07589 https://liff.line.me/2010522144-5nZYW3pn?q=0f6e4a0c3cb1
+2. https://liff.line.me/2010522144-5nZYW3pn?q=3cf803519a80
+1. 07899 https://liff.line.me/2010522144-5nZYW3pn?q=75407e8023c6
+`.trim();
+
+    let allCodes = [];
     let visitedSet = new Set();
 
-    // 自動從雜亂文字中擷取所有 liff.line.me 網址並去除重複
-    function extractUrls(text) {
-      const regex = /https?:\/\/liff\.line\.me\/[a-zA-Z0-9-_]+\?[^\s"'<>]+/gi;
-      const matches = text.match(regex) || [];
-      return [...new Set(matches.map(u => u.trim()))];
+    function extractCodes(text) {
+      const matches = text.match(/q=([0-9a-f]{12})/gi) || [];
+      return [...new Set(matches.map(m => m.split('=')[1].toLowerCase()))];
     }
 
     function init() {
-      const savedUrls = localStorage.getItem('custom_liff_urls');
-      const savedVisited = localStorage.getItem('custom_liff_visited');
-      const savedProto = localStorage.getItem('custom_liff_proto') || 'line';
+      const defaultCodes = extractCodes(DEFAULT_TEXT);
+      const savedCodes = localStorage.getItem('mcd_all_codes');
+      const savedVisited = localStorage.getItem('mcd_visited_codes');
+      const savedProto = localStorage.getItem('mcd_proto') || 'line';
 
       document.getElementById('protocolSelect').value = savedProto;
 
-      if (savedUrls) {
-        allUrls = JSON.parse(savedUrls);
+      if (savedCodes) {
+        const parsed = JSON.parse(savedCodes);
+        allCodes = [...new Set([...defaultCodes, ...parsed])];
+      } else {
+        allCodes = defaultCodes;
       }
+      localStorage.setItem('mcd_all_codes', JSON.stringify(allCodes));
+
       if (savedVisited) {
         visitedSet = new Set(JSON.parse(savedVisited));
       }
@@ -284,26 +391,21 @@
     }
 
     function saveState() {
-      localStorage.setItem('custom_liff_urls', JSON.stringify(allUrls));
-      localStorage.setItem('custom_liff_visited', JSON.stringify([...visitedSet]));
+      localStorage.setItem('mcd_all_codes', JSON.stringify(allCodes));
+      localStorage.setItem('mcd_visited_codes', JSON.stringify([...visitedSet]));
     }
 
     function saveProtocol() {
-      localStorage.setItem('custom_liff_proto', document.getElementById('protocolSelect').value);
+      localStorage.setItem('mcd_proto', document.getElementById('protocolSelect').value);
     }
 
-    function getUnvisitedUrls() {
-      return allUrls.filter(u => !visitedSet.has(u));
-    }
-
-    function getShortLabel(url) {
-      const qMatch = url.match(/[?&](q=[^&#]+)/i);
-      return qMatch ? qMatch[1] : url.replace(/^https?:\/\/liff\.line\.me\//i, '');
+    function getUnvisitedCodes() {
+      return allCodes.filter(c => !visitedSet.has(c));
     }
 
     function render() {
-      const unvisited = getUnvisitedUrls();
-      const total = allUrls.length;
+      const unvisited = getUnvisitedCodes();
+      const total = allCodes.length;
       const doneCount = total - unvisited.length;
 
       document.getElementById('statsText').innerHTML =
@@ -313,48 +415,39 @@
       const stepText = document.getElementById('stepText');
       const hintText = document.getElementById('hintText');
       const codeText = document.getElementById('codeText');
-      const subControls = document.getElementById('subControls');
 
-      if (total === 0) {
-        btn.className = 'empty';
-        stepText.textContent = '尚無連結';
-        hintText.textContent = '👆 點擊畫面任意處貼上網址';
-        codeText.textContent = '支援整段 LINE 社群文字直接貼上解析';
-        subControls.style.display = 'none';
-      } else if (unvisited.length === 0) {
+      if (unvisited.length === 0) {
         btn.className = 'done';
         stepText.textContent = '🎉 全部完成';
-        hintText.textContent = `目前貼上的 ${total} 個網址皆已點過！`;
-        codeText.textContent = '點此處或右上角「➕ 貼上新連結」可繼續加入新網址';
-        subControls.style.display = 'flex';
+        hintText.textContent = `目前清單中的 ${total} 個網址皆已點過！`;
+        codeText.textContent = '點擊右上角「➕ 貼上新連結」可隨時加入新網址';
       } else {
-        const currentUrl = unvisited[0];
-        const currentOverallIdx = allUrls.indexOf(currentUrl) + 1;
+        const currentCode = unvisited[0];
+        const currentOverallIdx = allCodes.indexOf(currentCode) + 1;
         btn.className = '';
         stepText.textContent = `剩餘 ${unvisited.length} 個`;
         hintText.textContent = '👆 點螢幕任意處 ➔ 跳轉 LINE 領取';
-        codeText.textContent = `第 ${currentOverallIdx}/${total} 個 (${getShortLabel(currentUrl)})`;
-        subControls.style.display = 'flex';
+        codeText.textContent = `第 ${currentOverallIdx}/${total} 題 (q=${currentCode})`;
       }
     }
 
     function openNext() {
-      const unvisited = getUnvisitedUrls();
-      if (allUrls.length === 0 || unvisited.length === 0) {
+      const unvisited = getUnvisitedCodes();
+      if (unvisited.length === 0) {
         openModal();
         return;
       }
 
-      const targetUrl = unvisited[0];
-      visitedSet.add(targetUrl);
+      const code = unvisited[0];
+      visitedSet.add(code);
       saveState();
       render();
 
       const proto = document.getElementById('protocolSelect').value;
       if (proto === 'line') {
-        window.location.href = targetUrl.replace(/^https?:\/\/liff\.line\.me\//i, 'line://app/');
+        window.location.href = `line://app/${LIFF_ID}?q=${code}`;
       } else {
-        window.location.href = targetUrl;
+        window.location.href = `https://liff.line.me/${LIFF_ID}?q=${code}`;
       }
     }
 
@@ -364,21 +457,21 @@
         showToast('已經是第 1 個囉！');
         return;
       }
-      const lastUrl = visitedArray[visitedArray.length - 1];
-      visitedSet.delete(lastUrl);
+      const lastCode = visitedArray[visitedArray.length - 1];
+      visitedSet.delete(lastCode);
       saveState();
       render();
-      showToast(`已退回上一個 (${getShortLabel(lastUrl)})`);
+      showToast(`已退回上一題 (q=${lastCode})`);
     }
 
     function stepSkip() {
-      const unvisited = getUnvisitedUrls();
+      const unvisited = getUnvisitedCodes();
       if (unvisited.length === 0) return;
-      const targetUrl = unvisited[0];
-      visitedSet.add(targetUrl);
+      const code = unvisited[0];
+      visitedSet.add(code);
       saveState();
       render();
-      showToast(`已跳過 (${getShortLabel(targetUrl)})`);
+      showToast(`已跳過 q=${code}`);
     }
 
     function openModal() {
@@ -392,54 +485,50 @@
 
     function importUrls(mode) {
       const raw = document.getElementById('rawInput').value;
-      const extracted = extractUrls(raw);
+      const extracted = extractCodes(raw);
 
       if (extracted.length === 0) {
-        alert('找不到符合格式的 https://liff.line.me/... 網址！');
+        alert('找不到符合格式的 LIFF 網址（需包含 q=12碼序號）！');
         return;
       }
 
       if (mode === 'replace') {
-        allUrls = extracted;
+        allCodes = extracted;
         visitedSet.clear();
         saveState();
         render();
         closeModal();
-        showToast(`已載入 ${extracted.length} 組網址！`);
+        showToast(`已替換為全新 ${extracted.length} 組網址！`);
       } else {
-        const beforeCount = allUrls.length;
-        const merged = [...new Set([...allUrls, ...extracted])];
+        const beforeCount = allCodes.length;
+        const merged = [...new Set([...allCodes, ...extracted])];
         const newlyAdded = merged.length - beforeCount;
-        allUrls = merged;
+        allCodes = merged;
         saveState();
         render();
         closeModal();
-        const unvisitedNow = getUnvisitedUrls().length;
-        showToast(`成功解析 ${extracted.length} 組！新增 ${newlyAdded} 組未重複網址（待領取 ${unvisitedNow} 組）`);
+        const unvisitedNow = getUnvisitedCodes().length;
+        showToast(`成功解析 ${extracted.length} 組！新增 ${newlyAdded} 組未重複網址（待領取共 ${unvisitedNow} 組）`);
       }
     }
 
     function resetVisited() {
-      if (allUrls.length === 0) {
-        openModal();
-        return;
-      }
-      if (confirm('確定要將目前清單中的所有網址重置為「未點過」，從頭再刷一次嗎？')) {
+      if (confirm('確定要將目前所有網址重置為「未點過」，從頭開始刷嗎？')) {
         visitedSet.clear();
         saveState();
         render();
-        showToast('已重置所有開啟進度！');
+        showToast('已重置所有進度！');
       }
     }
 
-    function clearAllData() {
-      if (confirm('確定要清空所有已貼上的網址與歷史紀錄嗎？')) {
-        allUrls = [];
+    function restoreDefault() {
+      if (confirm('確定要還原為預設的 69 組網址並重置進度嗎？')) {
+        allCodes = extractCodes(DEFAULT_TEXT);
         visitedSet.clear();
         saveState();
         render();
         closeModal();
-        showToast('已清空所有網址與紀錄！');
+        showToast('已還原預設 69 組清單！');
       }
     }
 
