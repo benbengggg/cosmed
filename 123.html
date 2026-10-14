@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LINE LIFF 手機盲點接力器</title>
+  <style>
+    * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      overflow: hidden;
+    }
+    .top-bar {
+      padding: 12px 16px;
+      background: #1e293b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .stats { font-size: 13px; color: #94a3b8; }
+    .stats b { color: #38bdf8; }
+    .btn-group { display: flex; gap: 6px; }
+    .btn-small {
+      background: #334155;
+      color: #f1f5f9;
+      border: 1px solid #475569;
+      padding: 7px 11px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-small.primary {
+      background: #2563eb;
+      border-color: #3b82f6;
+    }
+    .btn-small:active { opacity: 0.8; }
+
+    /* 主盲點觸發區 */
+    #giantBtn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #06C755 0%, #059669 100%);
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    #giantBtn:active {
+      filter: brightness(0.92);
+      transform: scale(0.995);
+    }
+    #giantBtn.empty, #giantBtn.done {
+      background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+    }
+    .badge-mode {
+      font-size: 12px;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+    .step-num {
+      font-size: 54px;
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .hint {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .code-tag {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      max-width: 90%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sub-controls {
+      display: flex;
+      gap: 12px;
+      margin-top: 22px;
+    }
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* 底部模式切換列 */
+    .bottom-bar {
+      padding: 10px 16px;
+      background: #1e293b;
+      border-top: 1px solid #334155;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+    select {
+      background: #0f172a;
+      color: #fff;
+      border: 1px solid #475569;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+
+    /* 貼上新連結彈出視窗 */
+    #modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.95);
+      z-index: 999;
+      flex-direction: column;
+      padding: 16px;
+    }
+    #modal.open { display: flex; }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .modal-header h3 { margin: 0; font-size: 18px; }
+    textarea {
+      width: 100%;
+      flex: 1;
+      border-radius: 10px;
+      border: 1px solid #475569;
+      background: #1e293b;
+      color: #f8fafc;
+      padding: 12px;
+      font-size: 14px;
+      line-height: 1.4;
+      resize: none;
+      margin-bottom: 12px;
+      user-select: text;
+    }
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .modal-btn {
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      color: #fff;
+    }
+    .modal-btn.add {
+      background: #06C755;
+      grid-column: span 2;
+    }
+    .modal-btn.replace { background: #3b82f6; }
+    .modal-btn.clear { background: #ef4444; }
+    .toast {
+      position: fixed;
+      bottom: 65px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.85);
+      color: #4ade80;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.25s;
+      z-index: 1000;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <div class="stats" id="statsText">總題庫: <b>0</b> 組</div>
+    <div class="btn-group">
+      <button class="btn-small primary" onclick="openModal()">➕ 貼上新連結</button>
+      <button class="btn-small" onclick="resetVisited()">🔄 重刷已貼清單</button>
+    </div>
+  </div>
+
+  <!-- 全螢幕大按鈕 -->
+  <div id="giantBtn" class="empty" onclick="openNext()">
+    <div class="badge-mode">自動過濾文字雜訊・自動去重・記憶進度</div>
+    <div class="step-num" id="stepText">尚無連結</div>
+    <div class="hint" id="hintText">👆 點擊此處貼上你的 LIFF 網址</div>
+    <div class="code-tag" id="codeText">支援整段社群文字直接貼上</div>
+
+    <div class="sub-controls" id="subControls" style="display:none;" onclick="event.stopPropagation()">
+      <button class="nav-btn" onclick="stepPrev()">⬅️ 上一個</button>
+      <button class="nav-btn" onclick="stepSkip()">跳過 ➡️</button>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <span>開啟方式：</span>
+    <select id="protocolSelect" onchange="saveProtocol()">
+      <option value="line">LINE 直通協定 (line:// 秒開推薦)</option>
+      <option value="https">標準網頁連結 (https://liff.line.me)</option>
+    </select>
+  </div>
+
+  <!-- 貼上連結視窗 -->
+  <div id="modal">
+    <div class="modal-header">
+      <h3>📋 貼上網址或整段社群文字</h3>
+      <button class="btn-small" onclick="closeModal()">✖ 關閉</button>
+    </div>
+    <p style="font-size:13px; color:#94a3b8; margin:0 0 10px 0;">
+      直接將包含網址的整段文字（含編號、聊天文字皆可）貼在下方，系統會自動擷取網址並過濾重複項目：
+    </p>
+    <textarea id="rawInput" placeholder="請在此貼上包含 https://liff.line.me/... 的文字或網址清單"></textarea>
+    <div class="modal-actions">
+      <button class="modal-btn add" onclick="importUrls('append')">➕ 匯入並累加網址（保留已點過的紀錄）</button>
+      <button class="modal-btn replace" onclick="importUrls('replace')">🔁 覆蓋舊清單（只跑這次貼的）</button>
+      <button class="modal-btn clear" onclick="clearAllData()">🗑️ 清空所有網址與紀錄</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    let allUrls = [];
+    let visitedSet = new Set();
+
+    // 自動從雜亂文字中擷取所有 liff.line.me 網址並去除重複
+    function extractUrls(text) {
+      const regex = /https?:\/\/liff\.line\.me\/[a-zA-Z0-9-_]+\?[^\s"'<>]+/gi;
+      const matches = text.match(regex) || [];
+      return [...new Set(matches.map(u => u.trim()))];
+    }
+
+    function init() {
+      const savedUrls = localStorage.getItem('custom_liff_urls');
+      const savedVisited = localStorage.getItem('custom_liff_visited');
+      const savedProto = localStorage.getItem('custom_liff_proto') || 'line';
+
+      document.getElementById('protocolSelect').value = savedProto;
+
+      if (savedUrls) {
+        allUrls = JSON.parse(savedUrls);
+      }
+      if (savedVisited) {
+        visitedSet = new Set(JSON.parse(savedVisited));
+      }
+
+      render();
+    }
+
+    function saveState() {
+      localStorage.setItem('custom_liff_urls', JSON.stringify(allUrls));
+      localStorage.setItem('custom_liff_visited', JSON.stringify([...visitedSet]));
+    }
+
+    function saveProtocol() {
+      localStorage.setItem('custom_liff_proto', document.getElementById('protocolSelect').value);
+    }
+
+    function getUnvisitedUrls() {
+      return allUrls.filter(u => !visitedSet.has(u));
+    }
+
+    function getShortLabel(url) {
+      const qMatch = url.match(/[?&](q=[^&#]+)/i);
+      return qMatch ? qMatch[1] : url.replace(/^https?:\/\/liff\.line\.me\//i, '');
+    }
+
+    function render() {
+      const unvisited = getUnvisitedUrls();
+      const total = allUrls.length;
+      const doneCount = total - unvisited.length;
+
+      document.getElementById('statsText').innerHTML =
+        `總題庫: <b>${total}</b> 組 ｜ 已點過: <b>${doneCount}</b> ｜ 待領取: <b>${unvisited.length}</b>`;
+
+      const btn = document.getElementById('giantBtn');
+      const stepText = document.getElementById('stepText');
+      const hintText = document.getElementById('hintText');
+      const codeText = document.getElementById('codeText');
+      const subControls = document.getElementById('subControls');
+
+      if (total === 0) {
+        btn.className = 'empty';
+        stepText.textContent = '尚無連結';
+        hintText.textContent = '👆 點擊畫面任意處貼上網址';
+        codeText.textContent = '支援整段 LINE 社群文字直接貼上解析';
+        subControls.style.display = 'none';
+      } else if (unvisited.length === 0) {
+        btn.className = 'done';
+        stepText.textContent = '🎉 全部完成';
+        hintText.textContent = `目前貼上的 ${total} 個網址皆已點過！`;
+        codeText.textContent = '點此處或右上角「➕ 貼上新連結」可繼續加入新網址';
+        subControls.style.display = 'flex';
+      } else {
+        const currentUrl = unvisited[0];
+        const currentOverallIdx = allUrls.indexOf(currentUrl) + 1;
+        btn.className = '';
+        stepText.textContent = `剩餘 ${unvisited.length} 個`;
+        hintText.textContent = '👆 點螢幕任意處 ➔ 跳轉 LINE 領取';
+        codeText.textContent = `第 ${currentOverallIdx}/${total} 個 (${getShortLabel(currentUrl)})`;
+        subControls.style.display = 'flex';
+      }
+    }
+
+    function openNext() {
+      const unvisited = getUnvisitedUrls();
+      if (allUrls.length === 0 || unvisited.length === 0) {
+        openModal();
+        return;
+      }
+
+      const targetUrl = unvisited[0];
+      visitedSet.add(targetUrl);
+      saveState();
+      render();
+
+      const proto = document.getElementById('protocolSelect').value;
+      if (proto === 'line') {
+        window.location.href = targetUrl.replace(/^https?:\/\/liff\.line\.me\//i, 'line://app/');
+      } else {
+        window.location.href = targetUrl;
+      }
+    }
+
+    function stepPrev() {
+      const visitedArray = [...visitedSet];
+      if (visitedArray.length === 0) {
+        showToast('已經是第 1 個囉！');
+        return;
+      }
+      const lastUrl = visitedArray[visitedArray.length - 1];
+      visitedSet.delete(lastUrl);
+      saveState();
+      render();
+      showToast(`已退回上一個 (${getShortLabel(lastUrl)})`);
+    }
+
+    function stepSkip() {
+      const unvisited = getUnvisitedUrls();
+      if (unvisited.length === 0) return;
+      const targetUrl = unvisited[0];
+      visitedSet.add(targetUrl);
+      saveState();
+      render();
+      showToast(`已跳過 (${getShortLabel(targetUrl)})`);
+    }
+
+    function openModal() {
+      document.getElementById('rawInput').value = '';
+      document.getElementById('modal').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('open');
+    }
+
+    function importUrls(mode) {
+      const raw = document.getElementById('rawInput').value;
+      const extracted = extractUrls(raw);
+
+      if (extracted.length === 0) {
+        alert('找不到符合格式的 https://liff.line.me/... 網址！');
+        return;
+      }
+
+      if (mode === 'replace') {
+        allUrls = extracted;
+        visitedSet.clear();
+        saveState();
+        render();
+        closeModal();
+        showToast(`已載入 ${extracted.length} 組網址！`);
+      } else {
+        const beforeCount = allUrls.length;
+        const merged = [...new Set([...allUrls, ...extracted])];
+        const newlyAdded = merged.length - beforeCount;
+        allUrls = merged;
+        saveState();
+        render();
+        closeModal();
+        const unvisitedNow = getUnvisitedUrls().length;
+        showToast(`成功解析 ${extracted.length} 組！新增 ${newlyAdded} 組未重複網址（待領取 ${unvisitedNow} 組）`);
+      }
+    }
+
+    function resetVisited() {
+      if (allUrls.length === 0) {
+        openModal();
+        return;
+      }
+      if (confirm('確定要將目前清單中的所有網址重置為「未點過」，從頭再刷一次嗎？')) {
+        visitedSet.clear();
+        saveState();
+        render();
+        showToast('已重置所有開啟進度！');
+      }
+    }
+
+    function clearAllData() {
+      if (confirm('確定要清空所有已貼上的網址與歷史紀錄嗎？')) {
+        allUrls = [];
+        visitedSet.clear();
+        saveState();
+        render();
+        closeModal();
+        showToast('已清空所有網址與紀錄！');
+      }
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2600);
+    }
+
+    init();
+  </script>
+</body>
+</html>
